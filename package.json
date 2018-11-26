@@ -1,0 +1,50 @@
+{
+  "name": "graphql-i18n",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "./lib/index.js",
+  "jsnext:main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rimraf lib",
+    "lint": "tslint --force --format verbose \"src/**/*.ts\" \"test/*\"",
+    "build": "npm run clean && npm run lint && echo Using TypeScript && tsc --version && tsc -p ./tsconfig.release.json --pretty",
+    "test": "mocha --timeout 100000 --compilers ts:ts-node/register --recursive \"test/**/*.spec.ts\"",
+    "test:grep": "mocha --compilers ts:ts-node/register --recursive",
+    "coverage": "nyc npm run test",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/flat": "^0.0.28",
+    "@types/graphql": "^14.0.3",
+    "@types/lodash": "^4.14.118",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.9",
+    "@types/prettier": "^1.15.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "graphql": "^14.0.2",
+    "graphql-middleware": "^2.0.2",
+    "graphql-tools": "^4.0.3",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.15.2",
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  },
+  "dependencies": {
+    "flat": "^4.1.0",
+    "lodash": "^4.17.11"
+  }
+}
