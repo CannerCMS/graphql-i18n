@@ -1,0 +1,1 @@
+export { MemoryAdapter } from './memoryAdapter';
