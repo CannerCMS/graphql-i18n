@@ -75,11 +75,7 @@ const resolvers = {
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
-    middlewares: [i18n.middleware()],
-    context: req => ({
-        ...req,
-        user: getUser(req),
-    }),
+    middlewares: [i18n.middleware()]
 })
 
 server.start(() => console.log('Server is running on http://localhost:4000'))
