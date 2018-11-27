@@ -1,7 +1,10 @@
 /* tslint:disable:no-unused-expression */
 import * as chai from 'chai';
 import chaiAsPromised = require('chai-as-promised');
+import mongoose from 'mongoose';
+
 import { I18n } from '../src/index';
+import { MemoryAdapter, MongodbAdapter } from '../src/adapter';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -201,26 +204,7 @@ function testSuit() {
 }
 
 describe('i18n class', () => {
-  it('adapter not support error', () => {
-    const adapter = {
-      type: 'not support',
-    };
-
-    const schema = {
-      Test: {
-        idFromObject: object => object.id,
-        fields: ['name'],
-      },
-    };
-
-    expect(() => new I18n({adapter, schema, defaultLang: 'en'})).to.throw();
-  });
-
   it('fields empty error', () => {
-    const adapter = {
-      type: 'memory',
-    };
-
     const schema = {
       Test: {
         idFromObject: object => object.id,
@@ -228,16 +212,13 @@ describe('i18n class', () => {
       },
     };
 
-    expect(() => new I18n({adapter, schema, defaultLang: 'en'})).to.throw();
+    const memoryAdapter = new MemoryAdapter(schema);
+    expect(() => new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' })).to.throw();
   });
 });
 
 describe('i18n with memory adapter', () => {
   beforeEach(async () => {
-    const adapter = {
-      type: 'memory',
-    };
-
     const schema = {
       User: {
         idFromObject: object => object.id,
@@ -249,7 +230,36 @@ describe('i18n with memory adapter', () => {
       },
     };
 
-    this.i18n = new I18n({adapter, schema, defaultLang: 'en'});
+    const memoryAdapter = new MemoryAdapter(schema);
+    this.i18n = new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' });
+  });
+
+  testSuit.call(this);
+});
+
+describe('i18n with mongodb adapter', () => {
+  before(async () => {
+    const schema = {
+      User: {
+        idFromObject: object => object.id,
+        fields: ['name'],
+      },
+      Book: {
+        idFromObject: object => object.id,
+        fields: ['name', 'author.name'],
+      },
+    };
+
+    const mongodbAdapter = new MongodbAdapter('mongodb://localhost:27017/__test__');
+    this.i18n = new I18n({ adapter: mongodbAdapter, schema, defaultLang: 'en' });
+  });
+
+  afterEach(async () => {
+    await mongoose.model('I18n').remove({});
+  });
+
+  after(async () => {
+    await mongoose.connection.close();
   });
 
   testSuit.call(this);

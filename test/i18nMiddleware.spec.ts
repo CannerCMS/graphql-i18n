@@ -4,15 +4,12 @@ import { applyMiddleware } from 'graphql-middleware';
 import { makeExecutableSchema } from 'graphql-tools';
 
 import { I18n } from '../src/index';
+import { MemoryAdapter } from '../src/adapter';
 
 const expect = chai.expect;
 
 describe('i18n middleware', async () => {
   beforeEach(async () => {
-    const adapter = {
-      type: 'memory',
-    };
-
     const schema = {
       Book: {
         idFromObject: (object: any) => object.id,
@@ -20,7 +17,8 @@ describe('i18n middleware', async () => {
       },
     };
 
-    this.i18n = new I18n({adapter, schema, defaultLang: 'en'});
+    const memoryAdapter = new MemoryAdapter(schema);
+    this.i18n = new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' });
   });
 
   it('graphql query', async () => {
