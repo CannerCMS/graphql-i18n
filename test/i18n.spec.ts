@@ -42,7 +42,7 @@ function testSuit() {
     expect(this.i18n.destroy(whereUnique, data, language)).to.be.rejectedWith(Error);
   });
 
-  it('data keys not match schema', async () => {
+  it('data keys not match typeConfig', async () => {
     const whereUnique = { id: '1', type: 'Book' };
     const data = { author: { name: 'Test' }};
     const language = 'en';
@@ -205,21 +205,21 @@ function testSuit() {
 
 describe('i18n class', () => {
   it('fields empty error', () => {
-    const schema = {
+    const typeConfig = {
       Test: {
         idFromObject: object => object.id,
         fields: [],
       },
     };
 
-    const memoryAdapter = new MemoryAdapter(schema);
-    expect(() => new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' })).to.throw();
+    const memoryAdapter = new MemoryAdapter(typeConfig);
+    expect(() => new I18n({ adapter: memoryAdapter, typeConfig, defaultLang: 'en' })).to.throw();
   });
 });
 
 describe('i18n with memory adapter', () => {
   beforeEach(async () => {
-    const schema = {
+    const typeConfig = {
       User: {
         idFromObject: object => object.id,
         fields: ['name'],
@@ -230,8 +230,8 @@ describe('i18n with memory adapter', () => {
       },
     };
 
-    const memoryAdapter = new MemoryAdapter(schema);
-    this.i18n = new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' });
+    const memoryAdapter = new MemoryAdapter(typeConfig);
+    this.i18n = new I18n({ adapter: memoryAdapter, typeConfig, defaultLang: 'en' });
   });
 
   testSuit.call(this);
@@ -239,7 +239,7 @@ describe('i18n with memory adapter', () => {
 
 describe('i18n with mongodb adapter', () => {
   before(async () => {
-    const schema = {
+    const typeConfig = {
       User: {
         idFromObject: object => object.id,
         fields: ['name'],
@@ -251,7 +251,7 @@ describe('i18n with mongodb adapter', () => {
     };
 
     const mongodbAdapter = new MongodbAdapter('mongodb://localhost:27017/__test__');
-    this.i18n = new I18n({ adapter: mongodbAdapter, schema, defaultLang: 'en' });
+    this.i18n = new I18n({ adapter: mongodbAdapter, typeConfig, defaultLang: 'en' });
   });
 
   afterEach(async () => {

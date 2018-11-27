@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { IAdapter, ISchema, IWhereUnique, IWhere } from './types';
+import { IAdapter, ITypeConfig, IWhereUnique, IWhere } from './types';
 
 export class MemoryAdapter implements IAdapter {
   // storage
@@ -20,10 +20,10 @@ export class MemoryAdapter implements IAdapter {
   // }
   private storage: Record<string, any>;
 
-  constructor(schema: ISchema) {
+  constructor(typeConfig: ITypeConfig) {
     this.storage = {};
 
-    Object.keys(schema).map(key => {
+    Object.keys(typeConfig).map(key => {
       this.storage[key] = {};
     });
   }

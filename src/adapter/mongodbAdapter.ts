@@ -1,7 +1,6 @@
-import { pick } from 'lodash';
 import { Document, connect , Schema, Model, model } from 'mongoose';
 
-import { IAdapter, ISchema, IWhereUnique, IWhere } from './types';
+import { IAdapter, IWhereUnique, IWhere } from './types';
 
 interface IMongodbI18n {
   id: string;

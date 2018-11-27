@@ -28,14 +28,14 @@ const adapter = {
     type: 'memory',
 };
 
-const schema = {
+const typeConfig = {
     Book: {
         idFromObject: (object: any) => object.id,
         fields: ['name', 'author.name'],
     },
 };
 
-const i18n = new I18n({ adapter, schema, defaultLang: 'en' });
+const i18n = new I18n({ adapter, typeConfig, defaultLang: 'en' });
 
 const id = '1';
 const where = { type: 'Book', id };

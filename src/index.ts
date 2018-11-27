@@ -4,22 +4,22 @@ import { GraphQLResolveInfo, StringValueNode } from 'graphql';
 import { middleware, IMiddlewareFunction, } from 'graphql-middleware';
 
 import { II18nConstructorOptions } from './types';
-import { IAdapter, ISchema, IWhere, IWhereUnique } from './adapter/types';
+import { IAdapter, ITypeConfig, IWhere, IWhereUnique } from './adapter/types';
 import { getLeafPath } from './utils';
 
 export class I18n {
   private adapter: IAdapter;
-  private schema: ISchema;
+  private typeConfig: ITypeConfig;
   private types: string[];
   private defaultLang: string;
 
   constructor(options: II18nConstructorOptions) {
-    const { adapter, schema, defaultLang } = options;
-    this.checkSchema(schema);
+    const { adapter, typeConfig, defaultLang } = options;
+    this.checkTypeConfig(typeConfig);
 
     this.adapter = adapter;
-    this.schema = schema;
-    this.types = Object.keys(schema);
+    this.typeConfig = typeConfig;
+    this.types = Object.keys(typeConfig);
     this.defaultLang = defaultLang;
   }
 
@@ -84,7 +84,7 @@ export class I18n {
           ? null
           : info.fieldNodes[0].directives.find(o => o.name.value === 'locale');
 
-        if (!directive || !this.schema[returnType] || isNil(result)) {
+        if (!directive || !this.typeConfig[returnType] || isNil(result)) {
           return result;
         }
 
@@ -92,7 +92,7 @@ export class I18n {
         const lang = (langArg.value as StringValueNode).value;
 
         if (Array.isArray(result)) {
-          const ids = result.map(o => this.schema[returnType].idFromObject(o));
+          const ids = result.map(o => this.typeConfig[returnType].idFromObject(o));
           const where = { type: returnType, ids };
           const i18nResult = await this.find(where, lang);
           if (isEmpty(i18nResult)) {
@@ -100,7 +100,7 @@ export class I18n {
           }
 
           return result.map(obj => {
-            const id = this.schema[returnType].idFromObject(obj);
+            const id = this.typeConfig[returnType].idFromObject(obj);
             return isNil(i18nResult[id])
               ? obj
               : {
@@ -109,7 +109,7 @@ export class I18n {
               };
           });
         } else {
-          const id = this.schema[returnType].idFromObject(result);
+          const id = this.typeConfig[returnType].idFromObject(result);
           const where = { type: returnType, id };
           const i18nResult = await this.findOne(where, lang);
           return isNil(i18nResult)
@@ -157,18 +157,18 @@ export class I18n {
     return middleware(generateMiddleware);
   }
 
-  private checkSchema(schema: ISchema) {
-    Object.keys(schema).map(key => {
-      if (!isFunction(schema[key].idFromObject)) {
-        throw Error(`schema ${key} does not have \`idFromObject\` function.`);
+  private checkTypeConfig(typeConfig: ITypeConfig) {
+    Object.keys(typeConfig).map(key => {
+      if (!isFunction(typeConfig[key].idFromObject)) {
+        throw Error(`typeConfig ${key} does not have \`idFromObject\` function.`);
       }
 
-      if (!Array.isArray(schema[key].fields)) {
-        throw Error(`schema ${key}'s fields ${schema[key].fields} is not array.`);
+      if (!Array.isArray(typeConfig[key].fields)) {
+        throw Error(`typeConfig ${key}'s fields ${typeConfig[key].fields} is not array.`);
       }
 
-      if (isEmpty(schema[key].fields)) {
-        throw new Error(`schema is empty for key ${key}`);
+      if (isEmpty(typeConfig[key].fields)) {
+        throw new Error(`typeConfig is empty for key ${key}`);
       }
     });
   }
@@ -182,8 +182,9 @@ export class I18n {
   private checkData(type: string, data: Record<string, any>) {
     const flattenData = flatten(data);
     const flattenDataKeys = Object.keys(flattenData);
-    if (!isEqual(flattenDataKeys.sort(), this.schema[type].fields.sort())) {
-      throw Error(`Data keys ${flattenDataKeys.sort()} is not equal to schema ${this.schema[type].fields.sort()}`);
+    if (!isEqual(flattenDataKeys.sort(), this.typeConfig[type].fields.sort())) {
+      throw Error(
+        `Data keys ${flattenDataKeys.sort()} is not equal to typeConfig ${this.typeConfig[type].fields.sort()}`);
     }
   }
 }

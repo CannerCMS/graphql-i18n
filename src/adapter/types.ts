@@ -6,10 +6,19 @@ export interface IAdapter {
   destroy(where: IWhereUnique, language: string): Promise<void>;
 }
 
-export interface ISchema {
+export interface ITypeConfig {
   [key: string]: {
     idFromObject: (object: any) => string;
     fields: string[];
+  };
+}
+
+interface IResolverConfig {
+  Query: {
+    [key: string]: {
+      returnType: string;
+      objectFromResolve: (resolveResult: any) => any | any[];
+    },
   };
 }
 

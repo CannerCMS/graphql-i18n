@@ -10,15 +10,18 @@ const expect = chai.expect;
 
 describe('i18n middleware', async () => {
   beforeEach(async () => {
-    const schema = {
+    const typeConfig = {
       Book: {
         idFromObject: (object: any) => object.id,
+        objectsFromResolve: (result: any) => {
+          return result.edges.map(o => o.book);
+        },
         fields: ['name', 'author.name'],
       },
     };
 
-    const memoryAdapter = new MemoryAdapter(schema);
-    this.i18n = new I18n({ adapter: memoryAdapter, schema, defaultLang: 'en' });
+    const memoryAdapter = new MemoryAdapter(typeConfig);
+    this.i18n = new I18n({ adapter: memoryAdapter, typeConfig, defaultLang: 'en' });
   });
 
   it('graphql query', async () => {
@@ -59,12 +62,12 @@ describe('i18n middleware', async () => {
         name: () => 'just test',
       },
     };
-    const schema = makeExecutableSchema({
+    const typeConfig = makeExecutableSchema({
       typeDefs,
       resolvers,
     });
 
-    const schemaWithPermissions = applyMiddleware(schema, this.i18n.middleware());
+    const schemaWithPermissions = applyMiddleware(typeConfig, this.i18n.middleware());
     // Execution
     const query = `
       query {

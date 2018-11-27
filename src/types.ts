@@ -1,7 +1,7 @@
-import { IAdapter, ISchema } from './adapter/types';
+import { IAdapter, ITypeConfig } from './adapter/types';
 
 export interface II18nConstructorOptions {
   adapter: IAdapter;
-  schema: ISchema;
+  typeConfig: ITypeConfig;
   defaultLang: string;
 }
