@@ -3,9 +3,8 @@ import { find, isEmpty , isEqual, isFunction, isNil } from 'lodash';
 import { GraphQLResolveInfo, StringValueNode } from 'graphql';
 import { middleware, IMiddlewareFunction, } from 'graphql-middleware';
 
-import { MemoryAdapter } from './adapter';
 import { II18nConstructorOptions } from './types';
-import { IAdapter, ISchema, IWhere, IWhereUnique, IAdapterParam } from './adapter/types';
+import { IAdapter, ISchema, IWhere, IWhereUnique } from './adapter/types';
 import { getLeafPath } from './utils';
 
 export class I18n {
@@ -17,8 +16,8 @@ export class I18n {
   constructor(options: II18nConstructorOptions) {
     const { adapter, schema, defaultLang } = options;
     this.checkSchema(schema);
-    this.setupAdapter(adapter, schema);
 
+    this.adapter = adapter;
     this.schema = schema;
     this.types = Object.keys(schema);
     this.defaultLang = defaultLang;
@@ -172,16 +171,6 @@ export class I18n {
         throw new Error(`schema is empty for key ${key}`);
       }
     });
-  }
-
-  private setupAdapter(adapter: IAdapterParam, schema: ISchema) {
-    switch (adapter.type.toLowerCase()) {
-      case 'memory':
-        this.adapter = new MemoryAdapter(schema);
-        return;
-      default:
-        throw Error(`Not support ${adapter.type} adapter`);
-    }
   }
 
   private checkType(type: string) {

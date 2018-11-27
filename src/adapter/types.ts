@@ -6,11 +6,6 @@ export interface IAdapter {
   destroy(where: IWhereUnique, language: string): Promise<void>;
 }
 
-export interface IAdapterParam {
-  type: string;
-  uri?: string;
-}
-
 export interface ISchema {
   [key: string]: {
     idFromObject: (object: any) => string;
