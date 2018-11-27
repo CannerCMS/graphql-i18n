@@ -44,7 +44,9 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@types/mongoose": "^5.3.1",
     "flat": "^4.1.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "mongoose": "^5.3.13"
   }
 }
