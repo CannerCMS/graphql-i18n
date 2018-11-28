@@ -13,11 +13,11 @@ export interface ITypeConfig {
   };
 }
 
-interface IResolverConfig {
+export interface IResolverConfig {
   Query: {
     [key: string]: {
-      returnType: string;
-      objectFromResolve: (resolveResult: any) => any | any[];
+      dataType: string;
+      dataPath?: string;
     },
   };
 }
