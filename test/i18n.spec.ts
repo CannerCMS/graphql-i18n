@@ -212,8 +212,57 @@ describe('i18n class', () => {
       },
     };
 
+    const resolverConfig = {
+      Query: {
+        test: {
+          dataType: 'Test',
+        },
+      },
+    };
+
     const memoryAdapter = new MemoryAdapter(typeConfig);
-    expect(() => new I18n({ adapter: memoryAdapter, typeConfig, defaultLang: 'en' })).to.throw();
+    expect(() => new I18n({ adapter: memoryAdapter, typeConfig, resolverConfig, defaultLang: 'en' })).to.throw();
+  });
+
+  it('resolver data type not match error', () => {
+    const typeConfig = {
+      User: {
+        idFromObject: object => object.id,
+        fields: ['name'],
+      },
+    };
+
+    const resolverConfig = {
+      Query: {
+        user: {
+          dataType: 'Test',
+        },
+      },
+    };
+
+    const memoryAdapter = new MemoryAdapter(typeConfig);
+    expect(() => new I18n({ adapter: memoryAdapter, typeConfig, resolverConfig, defaultLang: 'en' })).to.throw();
+  });
+
+  it('resolver data path invalid error', () => {
+    const typeConfig = {
+      User: {
+        idFromObject: object => object.id,
+        fields: ['name'],
+      },
+    };
+
+    const resolverConfig = {
+      Query: {
+        user: {
+          dataType: 'User',
+          dataPath: '.',
+        },
+      },
+    };
+
+    const memoryAdapter = new MemoryAdapter(typeConfig);
+    expect(() => new I18n({ adapter: memoryAdapter, typeConfig, resolverConfig, defaultLang: 'en' })).to.throw();
   });
 });
 
@@ -230,8 +279,19 @@ describe('i18n with memory adapter', () => {
       },
     };
 
+    const resolverConfig = {
+      Query: {
+        user: {
+          dataType: 'User',
+        },
+        book: {
+          dataType: 'Book',
+        },
+      },
+    };
+
     const memoryAdapter = new MemoryAdapter(typeConfig);
-    this.i18n = new I18n({ adapter: memoryAdapter, typeConfig, defaultLang: 'en' });
+    this.i18n = new I18n({ adapter: memoryAdapter, typeConfig, resolverConfig, defaultLang: 'en' });
   });
 
   testSuit.call(this);
@@ -250,8 +310,19 @@ describe('i18n with mongodb adapter', () => {
       },
     };
 
+    const resolverConfig = {
+      Query: {
+        user: {
+          dataType: 'User',
+        },
+        book: {
+          dataType: 'Book',
+        },
+      },
+    };
+
     const mongodbAdapter = new MongodbAdapter('mongodb://localhost:27017/__test__');
-    this.i18n = new I18n({ adapter: mongodbAdapter, typeConfig, defaultLang: 'en' });
+    this.i18n = new I18n({ adapter: mongodbAdapter, typeConfig, resolverConfig, defaultLang: 'en' });
   });
 
   afterEach(async () => {
